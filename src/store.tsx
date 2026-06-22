@@ -14,12 +14,9 @@ import { Dashboard } from './components/Dashboard';
  * to the private data-lake S3 bucket (OAC), so DuckDB-WASM fetches
  * Parquet/NDJSON files over HTTP range requests.
  */
-const DATA_ORIGIN = import.meta.env.PUBLIC_DATA_ORIGIN ?? '';
+const DATA_ORIGIN = typeof window !== 'undefined' ? window.location.origin : '';
 
-const dataUrl = (path: string) =>
-  DATA_ORIGIN
-    ? `${DATA_ORIGIN}/data/${path}`
-    : `https://reports.waqfenau.au/data/${path}`;
+const dataUrl = (path: string) => `${DATA_ORIGIN}/data/${path}`;
 
 /** Panel component: renders the main dashboard view. */
 const MainView: FC = () => <Dashboard />;
@@ -66,6 +63,10 @@ export const { roomStore, useRoomStore } = createRoomStore<RoomState>(
         ],
       },
       layout: {
+        config: {
+          type: 'mosaic',
+          nodes: 'main',
+        },
         panels: {
           main: {
             title: 'Dashboard',
