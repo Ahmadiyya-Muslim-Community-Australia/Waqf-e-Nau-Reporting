@@ -4,9 +4,10 @@ import {
   createRoomStore,
 } from '@sqlrooms/room-shell';
 import type { RoomShellSliceState } from '@sqlrooms/room-shell';
-import { DatabaseIcon } from 'lucide-react';
+import { DatabaseIcon, TableIcon } from 'lucide-react';
 import type { FC } from 'react';
 import { Dashboard } from './components/Dashboard';
+import { TajneedPage } from './components/TajneedPage';
 
 /**
  * Data sources pointing at the S3 data lake via CloudFront.
@@ -47,18 +48,13 @@ export const { roomStore, useRoomStore } = createRoomStore<RoomState>(
           },
           {
             type: 'url',
-            tableName: 'tally_submissions',
-            url: dataUrl('forms/tally_submissions.ndjson'),
-          },
-          {
-            type: 'url',
             tableName: 'registrations',
-            url: dataUrl('forms/registrations.ndjson'),
+            url: dataUrl('forms/registrations.parquet'),
           },
           {
             type: 'url',
             tableName: 'surveys',
-            url: dataUrl('forms/surveys.ndjson'),
+            url: dataUrl('forms/surveys.parquet'),
           },
         ],
       },
@@ -72,6 +68,12 @@ export const { roomStore, useRoomStore } = createRoomStore<RoomState>(
             title: 'Dashboard',
             icon: DatabaseIcon,
             component: MainView,
+            placement: 'main',
+          },
+          tajneed: {
+            title: 'Tajneed',
+            icon: TableIcon,
+            component: TajneedPage,
             placement: 'main',
           },
         },
