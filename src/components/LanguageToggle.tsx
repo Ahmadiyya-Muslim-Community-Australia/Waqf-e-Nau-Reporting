@@ -7,7 +7,7 @@
 
 import { useLanguage } from '../i18n/LanguageContext';
 import { Languages } from 'lucide-react';
-import { Button, Tooltip, TooltipContent, TooltipTrigger } from '@sqlrooms/ui';
+import { cn, Tooltip, TooltipContent, TooltipTrigger } from '@sqlrooms/ui';
 import type { FC } from 'react';
 
 export const LanguageToggle: FC = () => {
@@ -19,16 +19,20 @@ export const LanguageToggle: FC = () => {
     return (
         <Tooltip>
             <TooltipTrigger asChild>
-                <Button
-                    variant="ghost"
-                    size="icon"
-                    className="h-10 w-10 rounded-none hover:bg-secondary/50"
+                <button
                     onClick={() => setLang(nextLang)}
+                    className={cn(
+                        'flex h-10 w-10 items-center justify-center rounded-none',
+                        'text-slate-400 transition-colors duration-150',
+                        'hover:bg-secondary/40 hover:text-slate-600',
+                        'dark:text-slate-400 dark:hover:bg-secondary/20 dark:hover:text-slate-200',
+                    )}
+                    aria-label={label}
                 >
                     <Languages className="h-5 w-5" />
-                </Button>
+                </button>
             </TooltipTrigger>
-            <TooltipContent side="right">
+            <TooltipContent side={lang === 'ur' ? 'left' : 'right'}>
                 <p>{label}</p>
             </TooltipContent>
         </Tooltip>
