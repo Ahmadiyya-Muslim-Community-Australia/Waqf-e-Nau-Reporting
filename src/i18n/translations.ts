@@ -14,9 +14,35 @@ export type Bilingual = Record<Lang, string>;
 
 // ── Navigation & Pages ───────────────────────────────────────────────
 
+// ── Nav labels (kept for existing references) ────────────────
+
 export const NAV = {
     dashboard: { en: 'Dashboard', ur: 'ڈیش بورڈ' },
     tajneed: { en: 'Tajneed', ur: 'طاجنید' },
+    tajneedMenuSubtitle: {
+        en: 'Select a section to explore member data, analytics, and reports.',
+        ur: 'اراکین کے ڈیٹا، تجزیات اور رپورٹس کو دریافت کرنے کے لیے ایک سیکشن منتخب کریں۔',
+    },
+    tajneedDataTitle: { en: 'View Data', ur: 'ڈیٹا دیکھیں' },
+    tajneedDataDesc: {
+        en: 'Browse and search the full members register with filters and export.',
+        ur: 'مکمل ممبران رجسٹر کو فلٹرز اور ایکسپورٹ کے ساتھ براؤز اور تلاش کریں۔',
+    },
+    tajneedAnalyticsTitle: { en: 'Analytics', ur: 'تجزیات' },
+    tajneedAnalyticsDesc: {
+        en: 'Visual insights, charts, and trends across the membership.',
+        ur: 'ممبرشپ میں بصری بصیرت، چارٹس اور رجحانات۔',
+    },
+    tajneedReportsTitle: { en: 'Reports', ur: 'رپورٹس' },
+    tajneedReportsDesc: {
+        en: 'Generate and download formatted reports for Jama\'at use.',
+        ur: 'جماعت کے استعمال کے لیے فارمیٹ شدہ رپورٹس تیار اور ڈاؤن لوڈ کریں۔',
+    },
+    tajneedSettingsTitle: { en: 'Settings', ur: 'ترتیبات' },
+    tajneedSettingsDesc: {
+        en: 'Manage columns, display preferences, and data sources.',
+        ur: 'کالمز، ڈسپلے ترجیحات اور ڈیٹا کے ذرائع کا نظم کریں۔',
+    },
     reports: { en: 'Reports', ur: 'رپورٹس' },
     settings: { en: 'Settings', ur: 'ترتیبات' },
 } as const satisfies Record<string, Bilingual>;

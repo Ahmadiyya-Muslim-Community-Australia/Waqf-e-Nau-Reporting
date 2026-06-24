@@ -1,55 +1,151 @@
 @import '@waqfenau/design-tokens/fonts.css';
 @import 'tailwindcss';
+
+/* Enable class-based dark mode (toogled by ThemeToggle in App.tsx).
+   Without this, Tailwind v4 uses prefers-color-scheme media query. */
+@variant dark (&:where(.dark, .dark *));
 @import '@waqfenau/design-tokens/tokens.css';
 
-/* ── Waqf-e-Nau Brand Theme Overrides ────────────────────────
-   These HSL values override SQLRooms' default shadcn/ui theme to
-   match the main website (waqfenau.au) brand colors.
-   Primary: green (#00843d), Accent: gold (#e6b400)             */
+/* ═══════════════════════════════════════════════════════════════
+   Waqf-e-Nau Brand Theme — shadcn/ui HSL variables
+   ═══════════════════════════════════════════════════════════════
+   Matches the main website (waqfenau.au):
+     Primary: #00843d → 148 100% 26%   (green)
+     Accent:  #e6b400 → 47  100% 45%   (gold)
+     Dark BG: #030620 → 234 83%   7%   (deep navy)
+   ============================================================== */
 
 :root {
     --background: 0 0% 100%;
-    --foreground: 0 0% 10%;
+    --foreground: 234 16% 12%;
     --card: 0 0% 100%;
-    --card-foreground: 0 0% 10%;
+    --card-foreground: 234 16% 12%;
     --popover: 0 0% 100%;
-    --popover-foreground: 0 0% 10%;
+    --popover-foreground: 234 16% 12%;
     --primary: 148 100% 26%;
     --primary-foreground: 0 0% 100%;
-    --secondary: 148 30% 95%;
+    --secondary: 148 40% 97%;
     --secondary-foreground: 148 100% 20%;
-    --muted: 0 0% 96%;
-    --muted-foreground: 0 0% 45%;
+    --muted: 234 20% 97%;
+    --muted-foreground: 234 10% 46%;
     --accent: 47 100% 45%;
     --accent-foreground: 0 0% 100%;
     --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 98%;
-    --border: 0 0% 90%;
-    --input: 0 0% 90%;
+    --border: 234 16% 90%;
+    --input: 234 16% 90%;
     --ring: 148 100% 26%;
     --radius: 0.5rem;
 }
 
 .dark {
-    --background: 0 0% 4%;
-    --foreground: 0 0% 95%;
-    --card: 0 0% 6%;
-    --card-foreground: 0 0% 95%;
-    --popover: 0 0% 6%;
-    --popover-foreground: 0 0% 95%;
-    --primary: 148 60% 35%;
+    --background: 234 83% 7%;
+    --foreground: 215 49% 93%;
+    --card: 234 70% 9%;
+    --card-foreground: 215 49% 93%;
+    --popover: 234 70% 9%;
+    --popover-foreground: 215 49% 93%;
+    --primary: 148 70% 45%;
     --primary-foreground: 0 0% 100%;
-    --secondary: 148 20% 15%;
-    --secondary-foreground: 0 0% 90%;
-    --muted: 0 0% 12%;
-    --muted-foreground: 0 0% 55%;
-    --accent: 47 80% 40%;
+    --secondary: 148 30% 12%;
+    --secondary-foreground: 148 60% 80%;
+    --muted: 234 40% 12%;
+    --muted-foreground: 234 20% 60%;
+    --accent: 47 80% 45%;
     --accent-foreground: 0 0% 100%;
     --destructive: 0 62% 30%;
     --destructive-foreground: 0 0% 98%;
-    --border: 0 0% 15%;
-    --input: 0 0% 15%;
-    --ring: 148 60% 35%;
+    --border: 234 40% 16%;
+    --input: 234 40% 16%;
+    --ring: 148 70% 45%;
+}
+
+/* ── Animations & Keyframes ───────────────────────────────────
+   Matches the main site's animation language (waqfenau.au).
+   Tailwind v4 maps --animate-* in @theme to animate-* utilities. */
+
+@theme {
+    --color-brand: var(--wn-color-primary);
+    --color-brand-dark: var(--wn-color-primary-dark);
+    --color-brand-light: var(--wn-color-primary-light);
+    --color-brand-bg: var(--wn-color-primary-bg);
+
+    --animate-fade-in-up: fadeInUp 0.6s ease-out both;
+    --animate-fade-in-down: fadeInDown 0.3s ease-out both;
+    --animate-fade-slide-in: fadeSlideIn 0.3s ease-out both;
+    --animate-scale-in: scaleIn 0.2s ease-out both;
+    --animate-shimmer: shimmer 2s infinite linear;
+    --animate-gold-pulse: goldPulse 3s ease-in-out infinite;
+}
+
+@keyframes fadeInUp {
+    0% {
+        opacity: 0;
+        transform: translateY(1.5rem);
+    }
+
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes fadeInDown {
+    0% {
+        opacity: 0;
+        transform: translateY(-0.625rem);
+    }
+
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes fadeSlideIn {
+    0% {
+        opacity: 0;
+        transform: translateY(-0.5rem);
+    }
+
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes scaleIn {
+    0% {
+        opacity: 0;
+        transform: scale(0.95);
+    }
+
+    100% {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+@keyframes shimmer {
+    0% {
+        background-position: 200% 0;
+    }
+
+    100% {
+        background-position: -200% 0;
+    }
+}
+
+@keyframes goldPulse {
+
+    0%,
+    100% {
+        text-shadow: 0 0 20px rgba(244, 208, 63, 0.3), 0 2px 8px rgba(212, 165, 116, 0.4);
+    }
+
+    50% {
+        text-shadow: 0 0 30px rgba(244, 208, 63, 0.5), 0 2px 12px rgba(212, 165, 116, 0.6);
+    }
 }
 
 @layer base {
@@ -82,66 +178,77 @@
     html:not(.urdu-active) {
         font-feature-settings: normal;
     }
+
+    /* Skeleton shimmer enhancement — apply via className="skeleton-shimmer" */
+    .skeleton-shimmer {
+        background: linear-gradient(90deg,
+                hsl(var(--muted)) 25%,
+                hsl(var(--muted) / 0.5) 50%,
+                hsl(var(--muted)) 75%);
+        background-size: 200% 100%;
+        animation: shimmer 2s infinite linear;
+    }
 }
 
-@theme {
-    --color-brand: var(--wn-color-primary);
-    --color-brand-dark: var(--wn-color-primary-dark);
-    --color-brand-light: var(--wn-color-primary-light);
-    --color-brand-bg: var(--wn-color-primary-bg);
+/* ── Command Palette (overlay) ───────────────────────────────
+   The default SQLRooms command palette uses raw shadcn/ui
+   styling. We override key variables to match our brand.         */
+
+[cmdk-overlay] {
+    background: hsl(var(--background) / 0.6);
+    backdrop-filter: blur(4px);
 }
 
-/* ── Data Table Brand Overrides ─────────────────────────────────
-   SQLRooms' DataTablePaginated uses Tailwind utility classes like
-   bg-background, bg-muted, border-border, and font-mono. We scope
-   overrides via the .wn-table class (applied in TajneedPage).     */
+[cmdk-dialog] {
+    background: hsl(var(--card));
+    border: 1px solid hsl(var(--border));
+    border-radius: var(--radius);
+    box-shadow: 0 16px 48px hsl(var(--foreground) / 0.15);
+}
 
-@layer components {
-    .wn-table thead tr th {
-        background-color: var(--wn-color-primary) !important;
-        color: #ffffff !important;
-        font-weight: 600;
-        font-size: 0.75rem;
-        text-transform: uppercase;
-        letter-spacing: 0.05em;
-        font-family: var(--wn-font-sans);
-    }
+[cmdk-input] {
+    font-family: var(--wn-font-sans);
+}
 
-    .wn-table thead tr th button,
-    .wn-table thead tr th span,
-    .wn-table thead tr th svg {
-        color: #ffffff !important;
-    }
+[cmdk-item][data-selected="true"] {
+    background: hsl(var(--secondary));
+    color: hsl(var(--foreground));
+}
 
-    /* Hide the data-type badge (last element in header flex container) */
-    .wn-table thead tr th .gap-2> :last-child {
-        display: none !important;
-    }
+[cmdk-empty] {
+    color: hsl(var(--muted-foreground));
+}
 
-    .wn-table tbody tr td {
-        border-bottom: 1px solid #e5e7eb;
-        font-family: var(--wn-font-sans);
-        font-size: 0.8125rem;
-        padding-top: 0.5rem;
-        padding-bottom: 0.5rem;
-    }
+/* ── AG Grid Wrapper ──────────────────────────────────────────
+   Replaces the old .wn-table overrides. The PremiumTable component
+   uses AG Grid's themeQuartz.withParams() for brand colors, so
+   only structural/layout helpers are needed here.                */
 
-    .wn-table tbody tr:last-child td {
-        border-bottom: none;
-    }
+.ag-wrapper {
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+    height: 100%;
+}
 
-    .wn-table tbody tr:hover td {
-        background-color: var(--wn-color-primary-bg) !important;
-    }
+.ag-wrapper .ag-root-wrapper {
+    flex: 1;
+    min-height: 0;
+}
 
-    /* Override font-mono in table body */
-    .wn-table div.font-mono {
-        font-family: var(--wn-font-sans) !important;
-    }
+.ag-wrapper .ag-paging-panel {
+    font-family: var(--wn-font-sans);
+    font-size: 0.75rem;
+    color: hsl(var(--muted-foreground));
+    border-top: 1px solid hsl(var(--border));
+    padding: 0.25rem 0.75rem;
+}
 
-    /* Pagination bar */
-    .wn-table .border-t-0 {
-        border-color: #e5e7eb !important;
-        background-color: #ffffff;
-    }
+.ag-wrapper .ag-paging-button.ag-disabled {
+    opacity: 0.4;
+}
+
+.ag-wrapper button:focus-visible {
+    outline: 2px solid hsl(var(--ring));
+    outline-offset: 2px;
 }

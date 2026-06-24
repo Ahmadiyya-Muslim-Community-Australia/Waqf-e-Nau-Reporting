@@ -4,10 +4,17 @@ import {
   createRoomStore,
 } from '@sqlrooms/room-shell';
 import type { RoomShellSliceState } from '@sqlrooms/room-shell';
-import { DatabaseIcon, TableIcon } from 'lucide-react';
+import { DatabaseIcon, TableIcon, LayoutGrid, BarChart3, ClipboardList, Building2 } from 'lucide-react';
 import type { FC } from 'react';
 import { Dashboard } from './components/Dashboard';
 import { TajneedPage } from './components/TajneedPage';
+import { TajneedMenu } from './components/TajneedMenu';
+import { TajneedAnalytics } from './components/TajneedAnalytics';
+import { CensusMenu } from './components/CensusMenu';
+import { CensusPage } from './components/CensusPage';
+import { CensusAnalytics } from './components/CensusAnalytics';
+import { MarkazMenu } from './components/MarkazMenu';
+import { MarkazPage } from './components/MarkazPage';
 
 /**
  * Data sources pointing at the S3 data lake via CloudFront.
@@ -56,6 +63,11 @@ export const { roomStore, useRoomStore } = createRoomStore<RoomState>(
             tableName: 'surveys',
             url: dataUrl('forms/surveys.parquet'),
           },
+          {
+            type: 'url',
+            tableName: 'census',
+            url: dataUrl('tajneed/census.parquet'),
+          },
         ],
       },
       layout: {
@@ -70,10 +82,52 @@ export const { roomStore, useRoomStore } = createRoomStore<RoomState>(
             component: MainView,
             placement: 'main',
           },
-          tajneed: {
+          'tajneed-menu': {
             title: 'Tajneed',
+            icon: LayoutGrid,
+            component: TajneedMenu,
+            placement: 'main',
+          },
+          'tajneed-data': {
+            title: 'Tajneed Data',
             icon: TableIcon,
             component: TajneedPage,
+            placement: 'main',
+          },
+          'tajneed-analytics': {
+            title: 'Tajneed Analytics',
+            icon: BarChart3,
+            component: TajneedAnalytics,
+            placement: 'main',
+          },
+          'census-menu': {
+            title: 'Census',
+            icon: LayoutGrid,
+            component: CensusMenu,
+            placement: 'main',
+          },
+          'census-data': {
+            title: 'Census Data',
+            icon: ClipboardList,
+            component: CensusPage,
+            placement: 'main',
+          },
+          'census-analytics': {
+            title: 'Census Analytics',
+            icon: BarChart3,
+            component: CensusAnalytics,
+            placement: 'main',
+          },
+          'markaz-menu': {
+            title: 'Markaz',
+            icon: LayoutGrid,
+            component: MarkazMenu,
+            placement: 'main',
+          },
+          'markaz-data': {
+            title: 'Markaz Data',
+            icon: Building2,
+            component: MarkazPage,
             placement: 'main',
           },
         },

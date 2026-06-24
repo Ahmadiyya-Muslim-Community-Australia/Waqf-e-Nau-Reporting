@@ -12,17 +12,27 @@
     "test:watch": "vitest"
   },
   "dependencies": {
+    "@radix-ui/react-popover": "^1.1.17",
     "@sqlrooms/data-table": "^0.28.0",
     "@sqlrooms/duckdb": "^0.28.0",
     "@sqlrooms/room-shell": "^0.28.0",
     "@sqlrooms/sql-editor": "^0.28.0",
     "@sqlrooms/ui": "^0.28.0",
     "@tailwindcss/vite": "^4.3.1",
+    "@types/leaflet": "^1.9.21",
     "@waqfenau/design-tokens": "file:../packages/design-tokens",
+    "ag-grid-community": "^35.3.1",
+    "ag-grid-react": "^35.3.1",
     "bhasha-js": "^0.4.0",
+    "framer-motion": "^12.41.0",
+    "leaflet": "^1.9.4",
     "lucide-react": "^1.21.0",
     "react": "^19.2.6",
     "react-dom": "^19.2.6",
+    "react-leaflet": "^5.0.0",
+    "react-router-dom": "^7.18.0",
+    "recharts": "^3.9.0",
+    "sonner": "^2.0.7",
     "tailwindcss": "^4.3.1"
   },
   "overrides": {
