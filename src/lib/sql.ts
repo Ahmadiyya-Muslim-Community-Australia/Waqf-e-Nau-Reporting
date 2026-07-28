@@ -53,7 +53,6 @@ export function buildJamaatJoinClause(
     filter: JamaatFilter | null,
     table: string,
     joinColumn: string,
-    jamaatColumn: string,
 ): string {
     if (!filter?.jamat_id) return '';
     return `${table}.${joinColumn} IN (SELECT member_id FROM members WHERE jamaat = '${escapeSql(filter.jamat_id)}')`;
