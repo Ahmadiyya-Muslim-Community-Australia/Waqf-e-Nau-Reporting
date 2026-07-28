@@ -4,15 +4,17 @@ import {
   createRoomStore,
 } from '@sqlrooms/room-shell';
 import type { RoomShellSliceState } from '@sqlrooms/room-shell';
-import { DatabaseIcon, TableIcon, LayoutGrid, BarChart3, ClipboardList, Building2 } from 'lucide-react';
+import { DatabaseIcon, TableIcon, LayoutGrid, BarChart3, FileText, ClipboardList, Building2 } from 'lucide-react';
 import type { FC } from 'react';
 import { Dashboard } from './components/Dashboard';
 import { TajneedPage } from './components/TajneedPage';
 import { TajneedMenu } from './components/TajneedMenu';
 import { TajneedAnalytics } from './components/TajneedAnalytics';
+import { TajneedReports } from './components/TajneedReports';
 import { CensusMenu } from './components/CensusMenu';
 import { CensusPage } from './components/CensusPage';
 import { CensusAnalytics } from './components/CensusAnalytics';
+import { CensusReports } from './components/CensusReports';
 import { MarkazMenu } from './components/MarkazMenu';
 import { MarkazPage } from './components/MarkazPage';
 
@@ -68,6 +70,16 @@ export const { roomStore, useRoomStore } = createRoomStore<RoomState>(
             tableName: 'census',
             url: dataUrl('tajneed/census.parquet'),
           },
+          {
+            type: 'url',
+            tableName: 'users',
+            url: dataUrl('users/users.ndjson'),
+          },
+          {
+            type: 'url',
+            tableName: 'jamaats',
+            url: dataUrl('config/jamaats.json'),
+          },
         ],
       },
       layout: {
@@ -100,6 +112,12 @@ export const { roomStore, useRoomStore } = createRoomStore<RoomState>(
             component: TajneedAnalytics,
             placement: 'main',
           },
+          'tajneed-reports': {
+            title: 'Tajneed Reports',
+            icon: FileText,
+            component: TajneedReports,
+            placement: 'main',
+          },
           'census-menu': {
             title: 'Census',
             icon: LayoutGrid,
@@ -116,6 +134,12 @@ export const { roomStore, useRoomStore } = createRoomStore<RoomState>(
             title: 'Census Analytics',
             icon: BarChart3,
             component: CensusAnalytics,
+            placement: 'main',
+          },
+          'census-reports': {
+            title: 'Census Reports',
+            icon: FileText,
+            component: CensusReports,
             placement: 'main',
           },
           'markaz-menu': {

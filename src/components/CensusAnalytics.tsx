@@ -457,7 +457,7 @@ export const CensusAnalytics: FC = () => {
                                 <PieChart>
                                     <Pie data={employPermChartData} cx="50%" cy="50%" innerRadius={50} outerRadius={78}
                                         paddingAngle={4} dataKey="value" animationBegin={600} animationDuration={800}>
-                                        {employPermChartData.map((e, i) => <Cell key={i} fill={e.color} stroke="none"
+                                        {employPermChartData.map((e: Record<string, unknown>, i: number) => <Cell key={i} fill={(e.color as string) || '#00843d'} stroke="none"
                                             onClick={() => {
                                                 if (e.name === 'Employed with Permission') {
                                                     navigateToCensusTable(navigate, [{ column: 'employed', value: true }, { column: 'permission_huzoor', value: true }]);
@@ -472,9 +472,9 @@ export const CensusAnalytics: FC = () => {
                                     <Tooltip content={<ChartTooltip />} />
                                 </PieChart>
                             </ResponsiveContainer>
-                            {employPermChartData.find((d: any) => d.name === 'Employed without Permission') && (
+                            {employPermChartData.find((d: Record<string, unknown>) => d.name === 'Employed without Permission') && (
                                 <p className="text-center text-xs text-rose-600">
-                                    ⚠️ {employPermChartData.find((d: any) => d.name === 'Employed without Permission')?.value} employed without permission
+                                    ⚠️ {String((employPermChartData.find((d: Record<string, unknown>) => d.name === 'Employed without Permission') as Record<string, unknown> | undefined)?.value ?? '')} employed without permission
                                 </p>
                             )}
                         </ChartCard>

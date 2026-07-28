@@ -23,6 +23,8 @@ import { PremiumTable } from './PremiumTable';
 import { FilterBadges } from './FilterBadges';
 import { useRoomStore } from '../store';
 import { TableIcon, Search, X, ArrowUpFromLine, ArrowLeft } from 'lucide-react';
+import { escapeLike, injectJamaatFilter } from '../lib/sql';
+import { useAuth } from '../lib/AuthContext';
 
 const fadeInUp = {
     initial: { opacity: 0, y: 16 },
@@ -32,17 +34,6 @@ const fadeInUp = {
         transition: { type: 'spring' as const, stiffness: 200, damping: 22 },
     },
 } as const;
-
-// ── SQL helpers ──────────────────────────────────────────────────────
-
-/**
- * Escape a string for safe use in a DuckDB LIKE pattern.
- */
-function escapeLike(value: string): string {
-    return value.replace(/[%_]/g, '\\$&');
-}
-
-
 
 // ── Debounce hook ────────────────────────────────────────────────────
 
@@ -126,6 +117,7 @@ function buildWhereFromFreeText(freeText: string): string {
 export const TajneedPage: FC = () => {
     const { t } = useLanguage();
     const navigate = useNavigate();
+    const { getJamaatFilter } = useAuth();
     const [searchParams] = useSearchParams();
     const initialFilter = searchParams.get('filter') || '';
     const [search, setSearch] = useState(initialFilter);
@@ -141,7 +133,8 @@ export const TajneedPage: FC = () => {
     const queryKey = `${debouncedSearch}`;
 
     // Fetch ALL data — column filters are applied client-side by AG Grid
-    const query = `
+    const jamaatFilter = getJamaatFilter();
+    const baseQuery = `
         SELECT
           given_names           AS "Given Names",
           family_name           AS "Family Name",
@@ -163,6 +156,7 @@ export const TajneedPage: FC = () => {
         ${whereClause}
         ORDER BY family_name, given_names
     `;
+    const query = injectJamaatFilter(baseQuery, jamaatFilter);
 
     return (
         <div className="flex h-full flex-col overflow-hidden bg-slate-50 dark:bg-slate-900">

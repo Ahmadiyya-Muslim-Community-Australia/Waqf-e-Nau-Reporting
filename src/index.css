@@ -6,6 +6,7 @@
 @variant dark (&:where(.dark, .dark *));
 @import '@waqfenau/design-tokens/tokens.css';
 
+
 /* ═══════════════════════════════════════════════════════════════
    Waqf-e-Nau Brand Theme — shadcn/ui HSL variables
    ═══════════════════════════════════════════════════════════════
@@ -251,4 +252,120 @@
 .ag-wrapper button:focus-visible {
     outline: 2px solid hsl(var(--ring));
     outline-offset: 2px;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   Premium Scrollbar — Native CSS (works on ALL scrollable elements)
+   ═══════════════════════════════════════════════════════════════
+   Uses native browser APIs so it applies globally without JS:
+     - Firefox: scrollbar-width / scrollbar-color
+     - Chrome/Edge/Safari: ::-webkit-scrollbar pseudo-elements
+
+   Thin rounded pill floating over content — no track visible.
+   ============================================================== */
+
+/* Firefox */
+* {
+    scrollbar-width: thin;
+    scrollbar-color: hsl(var(--muted-foreground) / 0.35) transparent;
+}
+
+*:hover {
+    scrollbar-color: hsl(var(--muted-foreground) / 0.55) transparent;
+}
+
+/* Chrome, Edge, Safari — overlay style, no reserved track space */
+*::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+}
+
+*::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+*::-webkit-scrollbar-thumb {
+    background: hsl(var(--muted-foreground) / 0.35);
+    border-radius: 9999px;
+}
+
+*::-webkit-scrollbar-thumb:hover {
+    background: hsl(var(--muted-foreground) / 0.55);
+}
+
+/* Dark mode overrides */
+.dark * {
+    scrollbar-color: hsl(var(--muted-foreground) / 0.25) transparent;
+}
+
+.dark *:hover {
+    scrollbar-color: hsl(var(--muted-foreground) / 0.45) transparent;
+}
+
+.dark *::-webkit-scrollbar-thumb {
+    background: hsl(var(--muted-foreground) / 0.25);
+}
+
+.dark *::-webkit-scrollbar-thumb:hover {
+    background: hsl(var(--muted-foreground) / 0.45);
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   Print Styles — clean, no-sidebar layout for PDF/printing
+   ══════════════════════════════════════════════════════════════ */
+
+@media print {
+    /* Hide non-content UI */
+    nav, .RoomShell-Sidebar, .RoomShell-CommandPalette,
+    [class*="sidebar"], [class*="Sidebar"],
+    [class*="sidebar"],
+    .RoomShell > :not(.RoomShell-LayoutComposer) {
+        display: none !important;
+    }
+
+    /* Full width content */
+    .RoomShell-LayoutComposer,
+    [class*="RoomShell-LayoutComposer"] {
+        width: 100% !important;
+        max-width: 100% !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        overflow: visible !important;
+    }
+
+    /* Content area */
+    .RoomShell-LayoutComposer > * {
+        width: 100% !important;
+        max-width: 100% !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        overflow: visible !important;
+    }
+
+    /* Card backgrounds always print */
+    * {
+        background: #fff !important;
+        color: #000 !important;
+        box-shadow: none !important;
+    }
+
+    /* Ensure tables render */
+    table {
+        page-break-inside: auto;
+    }
+    tr {
+        page-break-inside: avoid;
+        page-break-after: auto;
+    }
+    thead {
+        display: table-header-group;
+    }
+    tfoot {
+        display: table-footer-group;
+    }
+
+    /* Lighten borders for print */
+    .border-slate-200, .dark\:border-slate-700 {
+        border-color: #ccc !important;
+    }
 }

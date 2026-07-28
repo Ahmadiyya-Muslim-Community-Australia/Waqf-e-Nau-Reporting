@@ -51,9 +51,8 @@ const tiles: Tile[] = [
         icon: FileText,
         titleKey: 'tajneedReportsTitle',
         descKey: 'tajneedReportsDesc',
-        path: '',
+        path: '/tajneed/reports',
         color: 'bg-blue-500',
-        badge: 'Coming Soon',
     },
     {
         id: 'settings',

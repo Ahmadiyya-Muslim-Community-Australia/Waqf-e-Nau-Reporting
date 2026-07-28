@@ -7,9 +7,12 @@ import { Toaster } from 'sonner';
 import { useRef, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import type { FC } from 'react';
+
 import { roomStore } from './store';
 import { LanguageProvider } from './i18n/LanguageContext';
 import { PremiumSidebar } from './components/PremiumSidebar';
+import { AnnouncementBanner } from './components/AnnouncementBanner';
+import { AuthProvider } from './lib/AuthContext';
 
 /* ── Router sync — URL ↔ panel ─────────────────────────────── */
 
@@ -39,6 +42,9 @@ const RouterSync: FC = () => {
         break;
       case '/tajneed/analytics':
         target = 'tajneed-analytics';
+        break;
+      case '/tajneed/reports':
+        target = 'tajneed-reports';
         break;
       case '/tajneed':
       case '/tajneed/':
@@ -115,33 +121,38 @@ const RouterSync: FC = () => {
 /* ── App ────────────────────────────────────────────────────── */
 
 const App: FC = () => (
+  <AuthProvider>
   <LanguageProvider>
-    <Toaster
-      position="bottom-right"
-      richColors
-      closeButton
-      toastOptions={{
-        style: { fontFamily: 'var(--wn-font-sans)' },
-      }}
-    />
-    <RoomShell className="h-screen" roomStore={roomStore}>
-      <RouterSync />
-      <RoomShell.Sidebar
-        className={cn(
-          '!w-56 !items-stretch !gap-0 !px-0 !py-3',
-          'bg-white/90 backdrop-blur-xl dark:bg-slate-900/90',
-          'ltr:border-r rtl:border-l border-slate-200 dark:border-slate-700',
-          /* Hide the auto-generated RoomShellSidebarButtons */
-          '[&>:first-child]:hidden',
-        )}
-      >
-        <PremiumSidebar />
-      </RoomShell.Sidebar>
-      <RoomShell.LayoutComposer />
-      <RoomShell.LoadingProgress />
-      <RoomShell.CommandPalette />
-    </RoomShell>
+    <div className="flex h-screen flex-col">
+      <Toaster
+        position="bottom-right"
+        richColors
+        closeButton
+        toastOptions={{
+          style: { fontFamily: 'var(--wn-font-sans)' },
+        }}
+      />
+      <AnnouncementBanner />
+      <RoomShell className="flex-1" roomStore={roomStore}>
+        <RouterSync />
+        <RoomShell.Sidebar
+          className={cn(
+            '!w-56 !items-stretch !gap-0 !px-0 !py-3',
+            'bg-white/90 backdrop-blur-xl dark:bg-slate-900/90',
+            'ltr:border-r rtl:border-l border-slate-200 dark:border-slate-700',
+            /* Hide the auto-generated RoomShellSidebarButtons */
+            '[&>:first-child]:hidden',
+          )}
+        >
+          <PremiumSidebar />
+        </RoomShell.Sidebar>
+        <RoomShell.LayoutComposer />
+        <RoomShell.LoadingProgress />
+        <RoomShell.CommandPalette />
+      </RoomShell>
+    </div>
   </LanguageProvider>
+  </AuthProvider>
 );
 
 export default App;

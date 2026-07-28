@@ -29,6 +29,8 @@ import {
 import type { FC } from 'react';
 import { AustraliaMap } from './AustraliaMap';
 import { navigateToTable } from '../hooks/useMemberFilters';
+import { injectJamaatFilter } from '../lib/sql';
+import { useAuth } from '../lib/AuthContext';
 
 /* ── Brand colours ─────────────────────────────────────────── */
 
@@ -105,12 +107,14 @@ export const TajneedAnalytics: FC = () => {
     const { t } = useLanguage();
     const navigate = useNavigate();
     const ready = useRoomStore((s) => Boolean(s.db.findTableByName?.('members')));
+    const { getJamaatFilter } = useAuth();
 
     /* ── Queries ──────────────────────────────────────────────── */
-    const genderQ = useSql<{ gender: string; count: number }>({ query: `SELECT gender, COUNT(*)::int AS count FROM members GROUP BY gender ORDER BY gender`, enabled: ready });
-    const ageGroupQ = useSql<{ age_group: string; gender: string; count: number }>({ query: `SELECT age_group, gender, COUNT(*)::int AS count FROM members GROUP BY age_group, gender ORDER BY age_group`, enabled: ready });
-    const jamaatQ = useSql<{ jamaat: string; count: number }>({ query: `SELECT jamaat, COUNT(*)::int AS count FROM members GROUP BY jamaat ORDER BY count DESC`, enabled: ready });
-    const totalQ = useSql<{ total: number }>({ query: `SELECT COUNT(*)::int AS total FROM members`, enabled: ready });
+    const jamaatFilter = getJamaatFilter();
+    const genderQ = useSql<{ gender: string; count: number }>({ query: injectJamaatFilter(`SELECT gender, COUNT(*)::int AS count FROM members GROUP BY gender ORDER BY gender`, jamaatFilter), enabled: ready });
+    const ageGroupQ = useSql<{ age_group: string; gender: string; count: number }>({ query: injectJamaatFilter(`SELECT age_group, gender, COUNT(*)::int AS count FROM members GROUP BY age_group, gender ORDER BY age_group`, jamaatFilter), enabled: ready });
+    const jamaatQ = useSql<{ jamaat: string; count: number }>({ query: injectJamaatFilter(`SELECT jamaat, COUNT(*)::int AS count FROM members GROUP BY jamaat ORDER BY count DESC`, jamaatFilter), enabled: ready });
+    const totalQ = useSql<{ total: number }>({ query: injectJamaatFilter(`SELECT COUNT(*)::int AS total FROM members`, jamaatFilter), enabled: ready });
     const regCountQ = useSql<{ total: number }>({ query: `SELECT COUNT(*)::int AS total FROM registrations`, enabled: ready });
     const surveyCountQ = useSql<{ total: number }>({ query: `SELECT COUNT(*)::int AS total FROM surveys`, enabled: ready });
     const regTrendQ = useSql<{ month: string; count: number }>({ query: `SELECT strftime(submitted_at, '%Y-%m') AS month, COUNT(*)::int AS count FROM registrations GROUP BY month ORDER BY month`, enabled: ready });

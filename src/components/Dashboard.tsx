@@ -13,6 +13,8 @@ import { toast } from 'sonner';
 import { useRoomStore } from '../store';
 import { useLanguage } from '../i18n/LanguageContext';
 import { Users, FileText, Database, AlertCircle, Clock, LayoutDashboard } from 'lucide-react';
+import { injectJamaatFilter } from '../lib/sql';
+import { useAuth } from '../lib/AuthContext';
 import type { FC } from 'react';
 
 /* ── Shared framer-motion variants ──────────────────────────── */
@@ -139,9 +141,10 @@ function notify(name: string, status: 'loading' | 'success' | 'error', msg?: str
 const MemberCount: FC = () => {
     const { t } = useLanguage();
     const membersReady = useRoomStore((s) => Boolean(s.db.findTableByName('members')));
+    const { getJamaatFilter } = useAuth();
 
     const { data, isLoading, error } = useSql<{ total: number }>({
-        query: `SELECT COUNT(*)::int AS total FROM members`,
+        query: injectJamaatFilter(`SELECT COUNT(*)::int AS total FROM members`, getJamaatFilter()),
         enabled: membersReady,
     });
 

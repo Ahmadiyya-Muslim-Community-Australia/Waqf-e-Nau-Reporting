@@ -151,7 +151,7 @@ export const LanguageProvider: FC<LanguageProviderProps> = ({
             if (root && !observerRef.current) {
                 const observer = new MutationObserver((mutations) => {
                     for (const mutation of mutations) {
-                        for (const addedNode of mutation.addedNodes) {
+                        for (const addedNode of Array.from(mutation.addedNodes)) {
                             if (addedNode.nodeType === Node.TEXT_NODE) {
                                 if (/\d/.test(addedNode.textContent ?? '')) {
                                     addedNode.textContent = toUrduNumerals(

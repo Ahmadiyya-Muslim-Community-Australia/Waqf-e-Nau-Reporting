@@ -51,9 +51,8 @@ const tiles: Tile[] = [
         icon: FileText,
         title: 'Reports',
         desc: 'Generate and export census summary reports',
-        path: '',
+        path: '/census/reports',
         color: 'bg-blue-500',
-        badge: 'Coming Soon',
     },
     {
         id: 'settings',

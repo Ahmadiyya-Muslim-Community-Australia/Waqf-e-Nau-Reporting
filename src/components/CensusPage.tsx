@@ -24,6 +24,8 @@ import { DynamicFilters, FILTERABLE_MEMBER_COLUMNS, type FilterClause, buildFilt
 import { type CensusFilter, buildCensusWhere, buildCensusAgGridModel, buildCensusFilterLabels, subscribeToChartFilters, getChartFilters, clearChartFilters } from '../hooks/useCensusFilters';
 import { useRoomStore } from '../store';
 import { ClipboardList, ArrowLeft, ArrowUpFromLine, Search, X } from 'lucide-react';
+import { buildJamaatClause } from '../lib/sql';
+import { useAuth } from '../lib/AuthContext';
 
 const fadeInUp = {
     initial: { opacity: 0, y: 16 },
@@ -156,6 +158,7 @@ export const CensusPage: FC = () => {
 
     // Build WHERE clause from all search/filter sources
     const esc = (s: string) => s.replace(/'/g, "''");
+    const { getJamaatFilter } = useAuth();
     const whereClause = useMemo(() => {
         const clauses: string[] = [];
 
@@ -210,8 +213,13 @@ export const CensusPage: FC = () => {
         // Chart drill-down filter (from analytics → census data)
         if (censusWhereFilter) clauses.push(censusWhereFilter);
 
+        // Jama'at filter (RBAC — restricts to user's jama'at)
+        const jamaatFilter = getJamaatFilter();
+        const jamaatClause = buildJamaatClause(jamaatFilter, 'm');
+        if (jamaatClause) clauses.push(jamaatClause);
+
         return clauses.length > 0 ? `WHERE ${clauses.join(' AND ')}` : '';
-    }, [freeText, searchColumnFilters, memberFreeText, memberSearchColumnFilters, memberFilters, censusWhereFilter]);
+    }, [freeText, searchColumnFilters, memberFreeText, memberSearchColumnFilters, memberFilters, censusWhereFilter, getJamaatFilter]);
 
     const query = `
         SELECT

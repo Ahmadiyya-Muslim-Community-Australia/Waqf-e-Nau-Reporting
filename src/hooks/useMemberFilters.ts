@@ -33,6 +33,7 @@
 import { useSearchParams } from 'react-router-dom';
 import type { NavigateFunction } from 'react-router-dom';
 import { parseSearch } from '../components/FiltersBar';
+import { escapeSql } from '../lib/sql';
 
 /* ═══════════════════════════════════════════════════════════════════
    TYPES
@@ -106,14 +107,13 @@ export function parseFilterString(search: string): MemberFilters {
  */
 export function buildWhereFromFilters(filters: MemberFilters): string {
     const clauses: string[] = [];
-    const esc = (s: string) => s.replace(/'/g, "''");
 
-    if (filters.gender) clauses.push(`gender = '${esc(filters.gender)}'`);
-    if (filters.jamaat) clauses.push(`jamaat = '${esc(filters.jamaat)}'`);
-    if (filters.age_group) clauses.push(`age_group = '${esc(filters.age_group)}'`);
+    if (filters.gender) clauses.push(`gender = '${escapeSql(filters.gender)}'`);
+    if (filters.jamaat) clauses.push(`jamaat = '${escapeSql(filters.jamaat)}'`);
+    if (filters.age_group) clauses.push(`age_group = '${escapeSql(filters.age_group)}'`);
 
     if (filters.search) {
-        const term = esc(filters.search);
+        const term = escapeSql(filters.search);
         clauses.push(`(
       given_names ILIKE '%${term}%'
       OR family_name ILIKE '%${term}%'
