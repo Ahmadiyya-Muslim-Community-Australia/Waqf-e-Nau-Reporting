@@ -13,7 +13,7 @@ export interface JamaatFilter {
 export function buildJamaatClause(filter: JamaatFilter | null, tableAlias?: string): string {
     if (!filter?.jamat_id) return '';
     const col = tableAlias ? `${tableAlias}.jamaat` : 'jamaat';
-    return `${col} = '${escapeSql(filter.jamat_id)}'`;
+    return `${col} IN (SELECT label FROM jamaats WHERE jamaatId = '${escapeSql(filter.jamat_id)}')`;
 }
 
 export function injectJamaatFilter(

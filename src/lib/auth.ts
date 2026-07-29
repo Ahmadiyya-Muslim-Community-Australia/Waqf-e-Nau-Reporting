@@ -14,17 +14,6 @@ function getCookie(name: string): string | null {
     return match ? decodeURIComponent(match[1]) : null;
 }
 
-function decodeJwtPayload(token: string): Record<string, unknown> | null {
-    const parts = token.split('.');
-    if (parts.length !== 3) return null;
-    const payload = parts[1];
-    const padded = payload.length % 4 === 3 ? payload + '=' : payload.length % 4 === 2 ? payload + '==' : payload;
-    const decoded = atob(padded.replace(/-/g, '+').replace(/_/g, '/'));
-    if (decoded.length === 0) return null;
-    if (decoded.charCodeAt(0) !== 123) return null;
-    return JSON.parse(decoded) as Record<string, unknown>;
-}
-
 let _signingOut = false;
 
 export function setSigningOut(v: boolean): void {
@@ -34,36 +23,23 @@ export function setSigningOut(v: boolean): void {
 export function getUserFromCookie(): WnUserContext | null {
     if (_signingOut) return null;
 
-    const token = getCookie('__wn_idtoken');
-    if (token) {
-        const payload = decodeJwtPayload(token);
-        if (payload) {
-            const claims = payload as Record<string, unknown>;
-
+    const userCookie = getCookie('_wn_user');
+    if (userCookie) {
+        try {
+            const parsed = JSON.parse(decodeURIComponent(userCookie)) as Record<string, unknown>;
             return {
-                userId: (claims.sub as string) ?? '',
-                email: (claims.email as string) ?? '',
-                groups: (claims['cognito:groups'] as string[]) ?? [],
-                primaryRole: (claims['custom:primary_role'] as string) ?? null,
-                jamatId: (claims['custom:jamaat_id'] as string) ?? null,
-                functionalRoles: (claims['custom:functional_roles'] as string)
-                    ? (claims['custom:functional_roles'] as string).split(',').filter(Boolean)
-                    : [],
-                fullNameEn: claims['custom:full_name_en'] as string | undefined,
-                fullNameUr: claims['custom:full_name_ur'] as string | undefined,
+                userId: (parsed.userId as string) ?? '',
+                email: (parsed.email as string) ?? '',
+                groups: (parsed.groups as string[]) ?? [],
+                primaryRole: (parsed.primaryRole as string) ?? null,
+                jamatId: (parsed.jamatId as string) ?? null,
+                functionalRoles: [],
+                fullNameEn: parsed.fullNameEn as string | undefined,
+                fullNameUr: parsed.fullNameUr as string | undefined,
             };
+        } catch {
+            return null;
         }
-    }
-
-    if (getCookie('__wn_auth')) {
-        return {
-            userId: '',
-            email: '',
-            groups: [],
-            primaryRole: null,
-            jamatId: null,
-            functionalRoles: [],
-        };
     }
 
     return null;

@@ -53,12 +53,12 @@ describe('buildJamaatClause', () => {
         expect(buildJamaatClause({ jamat_id: '' })).toBe('');
     });
 
-    it('should produce a valid equality clause with escaped quotes', () => {
+    it('should produce a valid subquery clause with escaped quotes', () => {
         fc.assert(
             fc.property(fc.string({ minLength: 1, maxLength: 50 }), (jamatId) => {
                 const clause = buildJamaatClause({ jamat_id: jamatId });
                 const escapedId = jamatId.replace(/'/g, "''");
-                return clause === `jamaat = '${escapedId}'`;
+                return clause === `jamaat IN (SELECT label FROM jamaats WHERE jamaatId = '${escapedId}')`;
             }),
         );
     });
@@ -67,7 +67,7 @@ describe('buildJamaatClause', () => {
         fc.assert(
             fc.property(fc.string({ minLength: 1 }), (jamatId) => {
                 const clause = buildJamaatClause({ jamat_id: jamatId }, 'm');
-                return clause.startsWith('m.jamaat');
+                return clause.startsWith('m.jamaat') && clause.includes('SELECT label FROM jamaats');
             }),
         );
     });
@@ -87,7 +87,8 @@ describe('injectJamaatFilter', () => {
                 (table, jamatId) => {
                     const query = `SELECT * FROM ${table}`;
                     const result = injectJamaatFilter(query, { jamat_id: jamatId });
-                    return result.includes(`WHERE jamaat = '${jamatId.replace(/'/g, "''")}'`);
+                    const escapedId = jamatId.replace(/'/g, "''");
+                    return result.includes(`WHERE jamaat IN (SELECT label FROM jamaats WHERE jamaatId = '${escapedId}')`);
                 },
             ),
         );
@@ -101,7 +102,8 @@ describe('injectJamaatFilter', () => {
                 (condition, jamatId) => {
                     const query = `SELECT * FROM t WHERE ${condition} = 1`;
                     const result = injectJamaatFilter(query, { jamat_id: jamatId });
-                    return result.includes(`WHERE jamaat = '${jamatId.replace(/'/g, "''")}' AND`) && result.includes(`${condition} = 1`);
+                    const escapedId = jamatId.replace(/'/g, "''");
+                    return result.includes(`WHERE jamaat IN (SELECT label FROM jamaats WHERE jamaatId = '${escapedId}') AND`) && result.includes(`${condition} = 1`);
                 },
             ),
         );
@@ -110,12 +112,12 @@ describe('injectJamaatFilter', () => {
     it('should inject before GROUP BY when no WHERE exists', () => {
         const query = 'SELECT gender, COUNT(*) FROM members GROUP BY gender';
         const result = injectJamaatFilter(query, { jamat_id: 'test-id' });
-        expect(result).toBe("SELECT gender, COUNT(*) FROM members WHERE jamaat = 'test-id' GROUP BY gender");
+        expect(result).toBe("SELECT gender, COUNT(*) FROM members WHERE jamaat IN (SELECT label FROM jamaats WHERE jamaatId = 'test-id') GROUP BY gender");
     });
 
     it('should inject before ORDER BY when no WHERE or GROUP BY exists', () => {
         const query = 'SELECT * FROM members ORDER BY name';
         const result = injectJamaatFilter(query, { jamat_id: 'test-id' });
-        expect(result).toBe("SELECT * FROM members WHERE jamaat = 'test-id' ORDER BY name");
+        expect(result).toBe("SELECT * FROM members WHERE jamaat IN (SELECT label FROM jamaats WHERE jamaatId = 'test-id') ORDER BY name");
     });
 });
