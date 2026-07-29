@@ -1,5 +1,5 @@
 import { createContext, useContext, useEffect, useState, type FC, type ReactNode } from 'react';
-import { getUserFromCookie, hasPermission, getJamaatFilter, type WnUserContext, type JamaatFilter } from './auth';
+import { getUserFromCookie, hasPermission, getJamaatFilter, signOut as authSignOut, type WnUserContext, type JamaatFilter } from './auth';
 
 export interface AuthState {
     user: WnUserContext | null;
@@ -7,6 +7,7 @@ export interface AuthState {
     isLoading: boolean;
     hasPermission: (action: string) => boolean;
     getJamaatFilter: () => JamaatFilter | null;
+    signOut: () => void;
 }
 
 const AuthContext = createContext<AuthState>({
@@ -15,6 +16,7 @@ const AuthContext = createContext<AuthState>({
     isLoading: true,
     hasPermission: () => false,
     getJamaatFilter: () => null,
+    signOut: () => {},
 });
 
 export const AuthProvider: FC<{ children: ReactNode }> = ({ children }) => {
@@ -33,6 +35,7 @@ export const AuthProvider: FC<{ children: ReactNode }> = ({ children }) => {
         isLoading,
         hasPermission: (action: string) => hasPermission(user, action),
         getJamaatFilter: () => getJamaatFilter(user),
+        signOut: authSignOut,
     };
 
     return (

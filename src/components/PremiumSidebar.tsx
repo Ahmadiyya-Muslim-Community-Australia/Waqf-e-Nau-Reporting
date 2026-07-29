@@ -19,6 +19,7 @@ import { useNavigate } from 'react-router-dom';
 import { useLanguage } from '../i18n/LanguageContext';
 import { LanguageToggle } from './LanguageToggle';
 import { SidebarClock } from './SidebarClock';
+import { useAuth } from '../lib/AuthContext';
 import {
     LayoutDashboard,
     TableIcon,
@@ -26,6 +27,7 @@ import {
     Moon,
     ClipboardList,
     Building2,
+    LogOut,
     type LucideIcon,
 } from 'lucide-react';
 import { useCallback, useEffect, useState, type FC } from 'react';
@@ -178,7 +180,8 @@ const SidebarDivider: FC = () => (
    ═══════════════════════════════════════════════════════════════ */
 
 export const PremiumSidebar: FC = () => {
-    const { isUrdu } = useLanguage();
+    const { isUrdu, t } = useLanguage();
+    const { isAuthenticated, signOut } = useAuth();
 
     return (
         <>
@@ -207,7 +210,7 @@ export const PremiumSidebar: FC = () => {
 
             {/* ── Utilities ───────────────────────────────────── */}
             <div className="w-full border-t border-slate-200 px-2 pt-3 dark:border-slate-700">
-                <SectionLabel label="Settings" />
+                <SectionLabel label={t('settings')} />
                 <div className={cn(
                     'flex items-center gap-1 px-3 py-1',
                     isUrdu ? 'flex-row-reverse' : '',
@@ -215,6 +218,27 @@ export const PremiumSidebar: FC = () => {
                     <LanguageToggle />
                     <ThemeToggle />
                 </div>
+                {isAuthenticated && (
+                    <div className={cn(
+                        'flex items-center px-3 py-1',
+                        isUrdu ? 'flex-row-reverse' : '',
+                    )}>
+                        <Tooltip>
+                            <TooltipTrigger asChild>
+                                <button
+                                    onClick={signOut}
+                                    className="inline-flex h-9 w-9 items-center justify-center rounded-lg text-slate-400 transition-colors hover:bg-red-50 hover:text-red-500 dark:hover:bg-red-900/20 dark:hover:text-red-400"
+                                    aria-label={t('signOut')}
+                                >
+                                    <LogOut className="h-4 w-4" />
+                                </button>
+                            </TooltipTrigger>
+                            <TooltipContent side={isUrdu ? 'left' : 'right'}>
+                                <p>{t('signOut')}</p>
+                            </TooltipContent>
+                        </Tooltip>
+                    </div>
+                )}
             </div>
 
             {/* ── Clock ───────────────────────────────────────── */}

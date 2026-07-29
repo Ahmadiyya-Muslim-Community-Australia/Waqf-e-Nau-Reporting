@@ -15,38 +15,58 @@ function getCookie(name: string): string | null {
 }
 
 function decodeJwtPayload(token: string): Record<string, unknown> | null {
-    try {
-        const parts = token.split('.');
-        if (parts.length !== 3) return null;
-        const payload = parts[1];
-        const padded = payload.length % 4 === 3 ? payload + '=' : payload.length % 4 === 2 ? payload + '==' : payload;
-        const decoded = atob(padded.replace(/-/g, '+').replace(/_/g, '/'));
-        return JSON.parse(decoded);
-    } catch {
-        return null;
-    }
+    const parts = token.split('.');
+    if (parts.length !== 3) return null;
+    const payload = parts[1];
+    const padded = payload.length % 4 === 3 ? payload + '=' : payload.length % 4 === 2 ? payload + '==' : payload;
+    const decoded = atob(padded.replace(/-/g, '+').replace(/_/g, '/'));
+    if (decoded.length === 0) return null;
+    if (decoded.charCodeAt(0) !== 123) return null;
+    return JSON.parse(decoded) as Record<string, unknown>;
+}
+
+let _signingOut = false;
+
+export function setSigningOut(v: boolean): void {
+    _signingOut = v;
 }
 
 export function getUserFromCookie(): WnUserContext | null {
+    if (_signingOut) return null;
+
     const token = getCookie('__wn_idtoken');
-    if (!token) return null;
-    const payload = decodeJwtPayload(token);
-    if (!payload) return null;
+    if (token) {
+        const payload = decodeJwtPayload(token);
+        if (payload) {
+            const claims = payload as Record<string, unknown>;
 
-    const claims = payload as Record<string, unknown>;
+            return {
+                userId: (claims.sub as string) ?? '',
+                email: (claims.email as string) ?? '',
+                groups: (claims['cognito:groups'] as string[]) ?? [],
+                primaryRole: (claims['custom:primary_role'] as string) ?? null,
+                jamatId: (claims['custom:jamaat_id'] as string) ?? null,
+                functionalRoles: (claims['custom:functional_roles'] as string)
+                    ? (claims['custom:functional_roles'] as string).split(',').filter(Boolean)
+                    : [],
+                fullNameEn: claims['custom:full_name_en'] as string | undefined,
+                fullNameUr: claims['custom:full_name_ur'] as string | undefined,
+            };
+        }
+    }
 
-    return {
-        userId: (claims.sub as string) ?? '',
-        email: (claims.email as string) ?? '',
-        groups: (claims['cognito:groups'] as string[]) ?? [],
-        primaryRole: (claims['custom:primary_role'] as string) ?? null,
-        jamatId: (claims['custom:jamaat_id'] as string) ?? null,
-        functionalRoles: (claims['custom:functional_roles'] as string)
-            ? (claims['custom:functional_roles'] as string).split(',').filter(Boolean)
-            : [],
-        fullNameEn: claims['custom:full_name_en'] as string | undefined,
-        fullNameUr: claims['custom:full_name_ur'] as string | undefined,
-    };
+    if (getCookie('__wn_auth')) {
+        return {
+            userId: '',
+            email: '',
+            groups: [],
+            primaryRole: null,
+            jamatId: null,
+            functionalRoles: [],
+        };
+    }
+
+    return null;
 }
 
 export function hasPermission(user: WnUserContext | null, action: string): boolean {
@@ -94,4 +114,9 @@ export function getJamaatFilter(user: WnUserContext | null): JamaatFilter | null
     }
 
     return { jamat_id: '' };
+}
+
+export function signOut(): void {
+    setSigningOut(true);
+    window.location.href = '/_auth/logout';
 }

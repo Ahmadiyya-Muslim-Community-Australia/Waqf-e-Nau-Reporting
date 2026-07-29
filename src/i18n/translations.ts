@@ -143,6 +143,7 @@ export const UI = {
         ur: 'آپ کو اس حصے کو دیکھنے کی اجازت نہیں ہے۔ اگر آپ کو لگتا ہے کہ یہ غلطی ہے تو براہ کرم اپنے منتظم سے رابطہ کریں۔',
     },
     requiredPermission: { en: 'Required permission', ur: 'مطلوبہ اجازت' },
+    signOut: { en: 'Sign Out', ur: 'سائن آؤٹ' },
 } as const satisfies Record<string, Bilingual>;
 
 // ── Aggregate dictionary for lookup ──────────────────────────────────
