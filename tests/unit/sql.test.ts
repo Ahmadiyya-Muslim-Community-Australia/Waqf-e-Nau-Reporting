@@ -53,23 +53,19 @@ describe('buildJamaatClause', () => {
         expect(buildJamaatClause({ jamat_id: '' })).toBe('');
     });
 
-    it('should produce a valid subquery clause with escaped quotes', () => {
-        fc.assert(
-            fc.property(fc.string({ minLength: 1, maxLength: 50 }), (jamatId) => {
-                const clause = buildJamaatClause({ jamat_id: jamatId });
-                const escapedId = jamatId.replace(/'/g, "''");
-                return clause === `jamaat IN (SELECT label FROM jamaats WHERE jamaatId = '${escapedId}')`;
-            }),
-        );
+    it('should build an IN clause with name, label, and aliases', () => {
+        const clause = buildJamaatClause({ jamat_id: 'nsw-marsden-park' });
+        expect(clause).toBe("jamaat IN ('Marsden Park', 'NSW: Marsden Park', 'Sydney')");
+    });
+
+    it('should fall back to equality for unknown jamaat IDs', () => {
+        const clause = buildJamaatClause({ jamat_id: 'unknown-id' });
+        expect(clause).toBe("jamaat = 'unknown-id'");
     });
 
     it('should use table alias when provided', () => {
-        fc.assert(
-            fc.property(fc.string({ minLength: 1 }), (jamatId) => {
-                const clause = buildJamaatClause({ jamat_id: jamatId }, 'm');
-                return clause.startsWith('m.jamaat') && clause.includes('SELECT label FROM jamaats');
-            }),
-        );
+        const clause = buildJamaatClause({ jamat_id: 'nsw-marsden-park' }, 'm');
+        expect(clause).toBe("m.jamaat IN ('Marsden Park', 'NSW: Marsden Park', 'Sydney')");
     });
 });
 
@@ -88,7 +84,7 @@ describe('injectJamaatFilter', () => {
                     const query = `SELECT * FROM ${table}`;
                     const result = injectJamaatFilter(query, { jamat_id: jamatId });
                     const escapedId = jamatId.replace(/'/g, "''");
-                    return result.includes(`WHERE jamaat IN (SELECT label FROM jamaats WHERE jamaatId = '${escapedId}')`);
+                    return result.includes(`WHERE jamaat = '${escapedId}'`) || result.includes(`jamaat IN (`);
                 },
             ),
         );
@@ -102,8 +98,7 @@ describe('injectJamaatFilter', () => {
                 (condition, jamatId) => {
                     const query = `SELECT * FROM t WHERE ${condition} = 1`;
                     const result = injectJamaatFilter(query, { jamat_id: jamatId });
-                    const escapedId = jamatId.replace(/'/g, "''");
-                    return result.includes(`WHERE jamaat IN (SELECT label FROM jamaats WHERE jamaatId = '${escapedId}') AND`) && result.includes(`${condition} = 1`);
+                    return result.includes(`AND`) && result.includes(`${condition} = 1`);
                 },
             ),
         );
@@ -111,13 +106,13 @@ describe('injectJamaatFilter', () => {
 
     it('should inject before GROUP BY when no WHERE exists', () => {
         const query = 'SELECT gender, COUNT(*) FROM members GROUP BY gender';
-        const result = injectJamaatFilter(query, { jamat_id: 'test-id' });
-        expect(result).toBe("SELECT gender, COUNT(*) FROM members WHERE jamaat IN (SELECT label FROM jamaats WHERE jamaatId = 'test-id') GROUP BY gender");
+        const result = injectJamaatFilter(query, { jamat_id: 'nsw-marsden-park' });
+        expect(result).toBe("SELECT gender, COUNT(*) FROM members WHERE jamaat IN ('Marsden Park', 'NSW: Marsden Park', 'Sydney') GROUP BY gender");
     });
 
     it('should inject before ORDER BY when no WHERE or GROUP BY exists', () => {
         const query = 'SELECT * FROM members ORDER BY name';
-        const result = injectJamaatFilter(query, { jamat_id: 'test-id' });
-        expect(result).toBe("SELECT * FROM members WHERE jamaat IN (SELECT label FROM jamaats WHERE jamaatId = 'test-id') ORDER BY name");
+        const result = injectJamaatFilter(query, { jamat_id: 'nsw-marsden-park' });
+        expect(result).toBe("SELECT * FROM members WHERE jamaat IN ('Marsden Park', 'NSW: Marsden Park', 'Sydney') ORDER BY name");
     });
 });

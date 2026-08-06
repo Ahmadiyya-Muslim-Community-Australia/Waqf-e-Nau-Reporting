@@ -20,6 +20,8 @@ import { useLanguage } from '../i18n/LanguageContext';
 import { useRoomStore } from '../store';
 import { useNavigate } from 'react-router-dom';
 import { navigateToCensusTable } from '../hooks/useCensusFilters';
+import { useAuth } from '../lib/AuthContext';
+import { injectCensusJamaatFilter } from '../lib/sql';
 import {
     PieChart, Pie, Cell, ResponsiveContainer,
     BarChart, Bar, XAxis, YAxis, Tooltip,
@@ -108,71 +110,73 @@ export const CensusAnalytics: FC = () => {
     const ready = useRoomStore((s) => Boolean(s.db.findTableByName?.('census')));
 
     /* ── Queries ──────────────────────────────────────────────── */
-    const totalQ = useSql<{ total: number }>({ query: `SELECT COUNT(*)::int AS total FROM census`, enabled: ready });
+    const { getJamaatFilter } = useAuth();
+    const jamaatFilter = getJamaatFilter();
+
+    const totalQ = useSql<{ total: number }>({ query: injectCensusJamaatFilter(`SELECT COUNT(*)::int AS total FROM census`, jamaatFilter), enabled: ready });
 
     const khidmatJamaatQ = useSql<{ value: boolean; count: number }>({
-        query: `SELECT khidmat_jamaat AS value, COUNT(*)::int AS count FROM census GROUP BY value ORDER BY value`,
+        query: injectCensusJamaatFilter(`SELECT khidmat_jamaat AS value, COUNT(*)::int AS count FROM census GROUP BY value ORDER BY value`, jamaatFilter),
         enabled: ready,
     });
     const khidmatAuxQ = useSql<{ value: boolean; count: number }>({
-        query: `SELECT khidmat_auxiliary AS value, COUNT(*)::int AS count FROM census GROUP BY value ORDER BY value`,
+        query: injectCensusJamaatFilter(`SELECT khidmat_auxiliary AS value, COUNT(*)::int AS count FROM census GROUP BY value ORDER BY value`, jamaatFilter),
         enabled: ready,
     });
     const educationQ = useSql<{ status: string; count: number }>({
-        query: `SELECT education_status AS status, COUNT(*)::int AS count FROM census WHERE education_status IS NOT NULL GROUP BY status ORDER BY count DESC`,
+        query: injectCensusJamaatFilter(`SELECT education_status AS status, COUNT(*)::int AS count FROM census WHERE education_status IS NOT NULL GROUP BY status ORDER BY count DESC`, jamaatFilter),
         enabled: ready,
     });
     const languageQ = useSql<{ lang: string; count: number }>({
-        query: `SELECT languages AS lang, COUNT(*)::int AS count FROM census WHERE languages IS NOT NULL GROUP BY lang ORDER BY count DESC`,
+        query: injectCensusJamaatFilter(`SELECT languages AS lang, COUNT(*)::int AS count FROM census WHERE languages IS NOT NULL GROUP BY lang ORDER BY count DESC`, jamaatFilter),
         enabled: ready,
     });
     const interestQ = useSql<{ area: string; count: number }>({
-        query: `SELECT interest_area AS area, COUNT(*)::int AS count FROM census WHERE interest_area IS NOT NULL GROUP BY area ORDER BY count DESC`,
+        query: injectCensusJamaatFilter(`SELECT interest_area AS area, COUNT(*)::int AS count FROM census WHERE interest_area IS NOT NULL GROUP BY area ORDER BY count DESC`, jamaatFilter),
         enabled: ready,
     });
     const reconfirmed15Q = useSql<{ value: boolean; count: number }>({
-        query: `SELECT reconfirmed_15 AS value, COUNT(*)::int AS count FROM census GROUP BY value ORDER BY value`,
+        query: injectCensusJamaatFilter(`SELECT reconfirmed_15 AS value, COUNT(*)::int AS count FROM census GROUP BY value ORDER BY value`, jamaatFilter),
         enabled: ready,
     });
     const reconfirmed18Q = useSql<{ value: boolean; count: number }>({
-        query: `SELECT reconfirmed_18 AS value, COUNT(*)::int AS count FROM census GROUP BY value ORDER BY value`,
+        query: injectCensusJamaatFilter(`SELECT reconfirmed_18 AS value, COUNT(*)::int AS count FROM census GROUP BY value ORDER BY value`, jamaatFilter),
         enabled: ready,
     });
     const continueWaqfQ = useSql<{ value: boolean; count: number }>({
-        query: `SELECT continue_waqf AS value, COUNT(*)::int AS count FROM census GROUP BY value ORDER BY value`,
+        query: injectCensusJamaatFilter(`SELECT continue_waqf AS value, COUNT(*)::int AS count FROM census GROUP BY value ORDER BY value`, jamaatFilter),
         enabled: ready,
     });
     const intendJamiaQ = useSql<{ value: boolean; count: number }>({
-        query: `SELECT intend_jamia AS value, COUNT(*)::int AS count FROM census WHERE intend_jamia IS NOT NULL GROUP BY value ORDER BY value`,
+        query: injectCensusJamaatFilter(`SELECT intend_jamia AS value, COUNT(*)::int AS count FROM census WHERE intend_jamia IS NOT NULL GROUP BY value ORDER BY value`, jamaatFilter),
         enabled: ready,
     });
     const employedQ = useSql<{ value: boolean; count: number }>({
-        query: `SELECT employed AS value, COUNT(*)::int AS count FROM census GROUP BY value ORDER BY value`,
+        query: injectCensusJamaatFilter(`SELECT employed AS value, COUNT(*)::int AS count FROM census GROUP BY value ORDER BY value`, jamaatFilter),
         enabled: ready,
     });
     const moosiQ = useSql<{ value: boolean; count: number }>({
-        query: `SELECT is_moosi AS value, COUNT(*)::int AS count FROM census WHERE is_moosi IS NOT NULL GROUP BY value ORDER BY value`,
+        query: injectCensusJamaatFilter(`SELECT is_moosi AS value, COUNT(*)::int AS count FROM census WHERE is_moosi IS NOT NULL GROUP BY value ORDER BY value`, jamaatFilter),
         enabled: ready,
     });
     const syllabusQ = useSql<{ value: boolean; count: number }>({
-        query: `SELECT syllabus_current AS value, COUNT(*)::int AS count FROM census GROUP BY value ORDER BY value`,
+        query: injectCensusJamaatFilter(`SELECT syllabus_current AS value, COUNT(*)::int AS count FROM census GROUP BY value ORDER BY value`, jamaatFilter),
         enabled: ready,
     });
     const volunteerQ = useSql<{ value: boolean; count: number }>({
-        query: `SELECT wish_volunteer AS value, COUNT(*)::int AS count FROM census GROUP BY value ORDER BY value`,
+        query: injectCensusJamaatFilter(`SELECT wish_volunteer AS value, COUNT(*)::int AS count FROM census GROUP BY value ORDER BY value`, jamaatFilter),
         enabled: ready,
     });
     const guidanceHuzoorQ = useSql<{ value: boolean; count: number }>({
-        query: `SELECT guidance_huzoor AS value, COUNT(*)::int AS count FROM census WHERE guidance_huzoor IS NOT NULL GROUP BY value ORDER BY value`,
+        query: injectCensusJamaatFilter(`SELECT guidance_huzoor AS value, COUNT(*)::int AS count FROM census WHERE guidance_huzoor IS NOT NULL GROUP BY value ORDER BY value`, jamaatFilter),
         enabled: ready,
     });
     const permissionHuzoorQ = useSql<{ value: boolean; count: number }>({
-        query: `SELECT permission_huzoor AS value, COUNT(*)::int AS count FROM census WHERE permission_huzoor IS NOT NULL GROUP BY value ORDER BY value`,
+        query: injectCensusJamaatFilter(`SELECT permission_huzoor AS value, COUNT(*)::int AS count FROM census WHERE permission_huzoor IS NOT NULL GROUP BY value ORDER BY value`, jamaatFilter),
         enabled: ready,
     });
-    /** Cross-tab: employment vs permission from Huzoor */
     const employPermissionQ = useSql<{ employed: boolean; permission: boolean; count: number }>({
-        query: `SELECT employed, permission_huzoor AS permission, COUNT(*)::int AS count FROM census WHERE permission_huzoor IS NOT NULL GROUP BY employed, permission_huzoor ORDER BY employed, permission_huzoor`,
+        query: injectCensusJamaatFilter(`SELECT employed, permission_huzoor AS permission, COUNT(*)::int AS count FROM census WHERE permission_huzoor IS NOT NULL GROUP BY employed, permission_huzoor ORDER BY employed, permission_huzoor`, jamaatFilter),
         enabled: ready,
     });
 

@@ -1,3 +1,5 @@
+import { hasPermission as hasSharedPermission, ROLE_DEFAULTS, type Permission } from '@waqfenau/permissions';
+
 export interface WnUserContext {
     userId: string;
     email: string;
@@ -7,6 +9,7 @@ export interface WnUserContext {
     functionalRoles: string[];
     fullNameEn?: string;
     fullNameUr?: string;
+    permissions?: string[];
 }
 
 function getCookie(name: string): string | null {
@@ -25,54 +28,64 @@ export function getUserFromCookie(): WnUserContext | null {
 
     const userCookie = getCookie('_wn_user');
     if (userCookie) {
-        try {
-            const parsed = JSON.parse(decodeURIComponent(userCookie)) as Record<string, unknown>;
-            return {
-                userId: (parsed.userId as string) ?? '',
-                email: (parsed.email as string) ?? '',
-                groups: (parsed.groups as string[]) ?? [],
-                primaryRole: (parsed.primaryRole as string) ?? null,
-                jamatId: (parsed.jamatId as string) ?? null,
-                functionalRoles: [],
-                fullNameEn: parsed.fullNameEn as string | undefined,
-                fullNameUr: parsed.fullNameUr as string | undefined,
-            };
-        } catch {
-            return null;
-        }
+        const raw = decodeURIComponent(userCookie);
+        if (raw.length < 2 || (raw[0] !== '{' && raw[0] !== '[')) return null;
+        const parsed = JSON.parse(raw) as Record<string, unknown>;
+        if (typeof parsed !== 'object' || parsed === null) return null;
+        return {
+            userId: (parsed.userId as string) ?? '',
+            email: (parsed.email as string) ?? '',
+            groups: (parsed.groups as string[]) ?? [],
+            primaryRole: (parsed.primaryRole as string) ?? null,
+            jamatId: (parsed.jamatId as string) ?? null,
+            functionalRoles: [],
+            fullNameEn: parsed.fullNameEn as string | undefined,
+            fullNameUr: parsed.fullNameUr as string | undefined,
+            permissions: (parsed.permissions as string[]) ?? [],
+        };
     }
 
     return null;
 }
 
-export function hasPermission(user: WnUserContext | null, action: string): boolean {
-    if (!user) return false;
+const OLD_TO_NEW: Record<string, Permission> = {
+    'wn:reports:view': 'reports:view',
+    'wn:reports:export': 'reports:export',
+    'wn:members:read': 'members:read',
+    'wn:members:write': 'members:read',
+    'wn:system:configure': 'config:write',
+};
 
-    if (user.groups.includes('wn-national-secretary')) return true;
+function resolvePermissions(user: WnUserContext | null): readonly Permission[] {
+    if (!user) return [];
 
-    if (user.groups.includes('wn-naib-secretary-national')) {
-        if (action === 'wn:system:configure') return false;
-        return true;
+    if (user.groups.includes('wn-national-secretary')) {
+        return ROLE_DEFAULTS['wn-national-secretary'];
     }
 
-    if (user.groups.includes('wn-jamat-secretary')) {
-        if (!user.jamatId) return false;
-        if (action === 'wn:reports:view') return true;
-        if (action === 'wn:reports:export') return true;
-        if (action === 'wn:members:read') return true;
-        return false;
+    if (user.permissions && user.permissions.length > 0) {
+        return user.permissions as Permission[];
     }
 
-    if (user.groups.includes('wn-jamat-naib')) {
-        if (!user.jamatId) return false;
-        if (action === 'wn:reports:view') return true;
-        if (action === 'wn:members:read') return true;
-        if (action === 'wn:reports:export') return false;
-        return false;
+    if (user.primaryRole && ROLE_DEFAULTS[user.primaryRole]) {
+        return ROLE_DEFAULTS[user.primaryRole];
     }
 
-    return false;
+    const matchedGroup = user.groups.find((g) => ROLE_DEFAULTS[g]);
+    if (matchedGroup) {
+        return ROLE_DEFAULTS[matchedGroup];
+    }
+
+    return [];
 }
+
+export function hasPermission(user: WnUserContext | null, action: string): boolean {
+    const permissions = resolvePermissions(user);
+    const mapped = OLD_TO_NEW[action] ?? action;
+    return hasSharedPermission(permissions, mapped as Permission);
+}
+
+export { OLD_TO_NEW };
 
 export interface JamaatFilter {
     jamat_id: string;

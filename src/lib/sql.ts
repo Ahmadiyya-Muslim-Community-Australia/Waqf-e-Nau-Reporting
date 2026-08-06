@@ -10,10 +10,16 @@ export interface JamaatFilter {
     jamat_id: string;
 }
 
+import { JAMAAT_BY_ID } from '@waqfenau/api-contracts';
+
 export function buildJamaatClause(filter: JamaatFilter | null, tableAlias?: string): string {
     if (!filter?.jamat_id) return '';
     const col = tableAlias ? `${tableAlias}.jamaat` : 'jamaat';
-    return `${col} IN (SELECT label FROM jamaats WHERE jamaatId = '${escapeSql(filter.jamat_id)}')`;
+    const j = JAMAAT_BY_ID.get(filter.jamat_id as any);
+    if (!j) return `${col} = '${escapeSql(filter.jamat_id)}'`;
+    const values = [j.name, j.label, ...(j.aliases ?? [])];
+    const escaped = [...new Set(values)].map((v) => `'${escapeSql(v)}'`);
+    return `${col} IN (${escaped.join(', ')})`;
 }
 
 export function injectJamaatFilter(
@@ -47,6 +53,28 @@ export function injectJamaatFilter(
     }
 
     return `${trimmed} WHERE ${clause}`;
+}
+
+export function buildCensusJamaatClause(filter: JamaatFilter | null): string {
+    const clause = buildJamaatClause(filter, 'm');
+    if (!clause) return '';
+    return `member_id IN (SELECT m.member_id FROM members m WHERE ${clause})`;
+}
+
+export function injectCensusJamaatFilter(
+    query: string,
+    filter: JamaatFilter | null,
+): string {
+    const clause = buildCensusJamaatClause(filter);
+    if (!clause) return query;
+
+    const trimmed = query.trimEnd();
+    const groupIdx = trimmed.toUpperCase().lastIndexOf(' GROUP BY ');
+    const insertIdx = groupIdx >= 0 ? groupIdx : trimmed.length;
+    const before = trimmed.slice(0, insertIdx);
+    const after = trimmed.slice(insertIdx);
+    const hasWhere = /\bWHERE\b/i.test(before);
+    return `${before}${hasWhere ? ' AND ' : ' WHERE '}${clause}${after}`;
 }
 
 export function buildJamaatJoinClause(
