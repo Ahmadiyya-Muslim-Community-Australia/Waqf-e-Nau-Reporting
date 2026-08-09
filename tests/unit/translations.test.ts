@@ -28,7 +28,7 @@ describe('lookup', () => {
 
 describe('NAV dictionary', () => {
     it('has valid entries', () => {
-        for (const [key, val] of Object.entries(NAV)) {
+        for (const val of Object.values(NAV)) {
             expect(val.en).toBeTruthy();
             expect(val.ur).toBeTruthy();
             expect(typeof val.en).toBe('string');
@@ -39,7 +39,7 @@ describe('NAV dictionary', () => {
 
 describe('DASHBOARD dictionary', () => {
     it('has valid entries', () => {
-        for (const [key, val] of Object.entries(DASHBOARD)) {
+        for (const val of Object.values(DASHBOARD)) {
             expect(val.en).toBeTruthy();
             expect(val.ur).toBeTruthy();
         }
@@ -48,7 +48,7 @@ describe('DASHBOARD dictionary', () => {
 
 describe('TAJNEED dictionary', () => {
     it('has valid entries', () => {
-        for (const [key, val] of Object.entries(TAJNEED)) {
+        for (const val of Object.values(TAJNEED)) {
             expect(val.en).toBeTruthy();
             expect(val.ur).toBeTruthy();
         }
@@ -57,7 +57,7 @@ describe('TAJNEED dictionary', () => {
 
 describe('COLUMNS dictionary', () => {
     it('has valid entries', () => {
-        for (const [key, val] of Object.entries(COLUMNS)) {
+        for (const val of Object.values(COLUMNS)) {
             expect(val.en).toBeTruthy();
             expect(val.ur).toBeTruthy();
         }
@@ -66,7 +66,7 @@ describe('COLUMNS dictionary', () => {
 
 describe('UI dictionary', () => {
     it('has valid entries', () => {
-        for (const [key, val] of Object.entries(UI)) {
+        for (const val of Object.values(UI)) {
             expect(val.en).toBeTruthy();
             expect(val.ur).toBeTruthy();
         }

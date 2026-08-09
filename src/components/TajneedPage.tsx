@@ -12,26 +12,26 @@
  * column filters and free-text terms via the parseSearch() DSL.
  */
 
-import { Badge } from '@sqlrooms/ui';
-import { motion } from 'framer-motion';
-import { useState, useEffect, type FC } from 'react';
-import { useLanguage } from '../i18n/LanguageContext';
-import { useSearchParams, useNavigate } from 'react-router-dom';
-import { parseSearch } from './FiltersBar';
-import { parseFilterString } from '../hooks/useMemberFilters';
-import { PremiumTable } from './PremiumTable';
-import { FilterBadges } from './FilterBadges';
-import { useRoomStore } from '../store';
-import { TableIcon, Search, X, ArrowUpFromLine, ArrowLeft } from 'lucide-react';
-import { escapeLike, injectJamaatFilter } from '../lib/sql';
-import { useAuth } from '../lib/AuthContext';
+import { Badge } from "@sqlrooms/ui";
+import { motion } from "framer-motion";
+import { useState, useEffect, type FC } from "react";
+import { useLanguage } from "../i18n/LanguageContext";
+import { useSearchParams, useNavigate } from "react-router-dom";
+import { parseSearch } from "./FiltersBar";
+import { parseFilterString } from "../hooks/useMemberFilters";
+import { PremiumTable } from "./PremiumTable";
+import { FilterBadges } from "./FilterBadges";
+import { useRoomStore } from "../store";
+import { TableIcon, Search, X, ArrowUpFromLine, ArrowLeft } from "lucide-react";
+import { escapeLike, injectJamaatFilter } from "../lib/sql";
+import { useAuth } from "../lib/AuthContext";
 
 const fadeInUp = {
     initial: { opacity: 0, y: 16 },
     animate: {
         opacity: 1,
         y: 0,
-        transition: { type: 'spring' as const, stiffness: 200, damping: 22 },
+        transition: { type: "spring" as const, stiffness: 200, damping: 22 },
     },
 } as const;
 
@@ -60,9 +60,9 @@ function useDebounce<T>(value: T, delay: number): T {
  * field names (the SQL aliases used in the SELECT query below).
  */
 const FILTER_KEY_TO_AG_GRID_COL: Record<string, string> = {
-    gender: 'Gender',
+    gender: "Gender",
     jamaat: "Jama'at",
-    age_group: 'Age Group',
+    age_group: "Age Group",
 };
 
 /**
@@ -76,7 +76,7 @@ function toFilterModel(search: string): Record<string, object> | null {
     for (const [key, col] of Object.entries(FILTER_KEY_TO_AG_GRID_COL)) {
         const val = (filters as Record<string, string | undefined>)[key];
         if (val) {
-            model[col] = { filterType: 'text', type: 'equals', filter: val };
+            model[col] = { filterType: "text", type: "equals", filter: val };
             hasAny = true;
         }
     }
@@ -90,7 +90,7 @@ function toFilterModel(search: string): Record<string, object> | null {
  * Column filters are handled by AG Grid, not SQL.
  */
 function buildWhereFromFreeText(freeText: string): string {
-    if (!freeText) return '';
+    if (!freeText) return "";
     const term = escapeLike(freeText);
     return `WHERE (
         given_names ILIKE '%${term}%'
@@ -117,11 +117,13 @@ function buildWhereFromFreeText(freeText: string): string {
 export const TajneedPage: FC = () => {
     const { t } = useLanguage();
     const navigate = useNavigate();
-    const { getJamaatFilter } = useAuth();
+    const { getJamaatFilter, hasPermission } = useAuth();
     const [searchParams] = useSearchParams();
-    const initialFilter = searchParams.get('filter') || '';
+    const initialFilter = searchParams.get("filter") || "";
     const [search, setSearch] = useState(initialFilter);
-    const membersReady = useRoomStore((s) => Boolean(s.db.findTableByName?.('members')));
+    const membersReady = useRoomStore((s) =>
+        Boolean(s.db.findTableByName?.("members")),
+    );
 
     // Debounce search by 300ms so the query doesn't fire on every keystroke
     const debouncedSearch = useDebounce(search, 300);
@@ -141,17 +143,17 @@ export const TajneedPage: FC = () => {
           gender                AS "Gender",
           primary_phone         AS "Primary Phone",
           secondary_phone       AS "Secondary Phone",
-          jamaat                AS "Jama\'at",
+          jamaat                AS "Jama'at",
           age                   AS "Age",
           age_group             AS "Age Group",
-          father_given_names    AS "Father\'s Given Names",
-          father_family_name    AS "Father\'s Family Name",
-          father_phone          AS "Father\'s Phone",
-          mother_given_names    AS "Mother\'s Given Names",
-          mother_family_name    AS "Mother\'s Family Name",
-          mother_phone          AS "Mother\'s Phone",
-          grandfather_given_names AS "Grandfather\'s Given Names",
-          grandfather_family_name AS "Grandfather\'s Family Name"
+          father_given_names    AS "Father's Given Names",
+          father_family_name    AS "Father's Family Name",
+          father_phone          AS "Father's Phone",
+          mother_given_names    AS "Mother's Given Names",
+          mother_family_name    AS "Mother's Family Name",
+          mother_phone          AS "Mother's Phone",
+          grandfather_given_names AS "Grandfather's Given Names",
+          grandfather_family_name AS "Grandfather's Family Name"
         FROM members
         ${whereClause}
         ORDER BY family_name, given_names
@@ -168,8 +170,10 @@ export const TajneedPage: FC = () => {
                 animate="animate"
             >
                 {initialFilter ? (
-                    <button onClick={() => navigate('/tajneed/analytics')}
-                        className="flex h-8 w-8 items-center justify-center rounded-lg text-slate-400 transition-colors hover:bg-slate-200 hover:text-slate-600 dark:hover:bg-slate-700 dark:hover:text-slate-300">
+                    <button
+                        onClick={() => navigate("/tajneed/analytics")}
+                        className="flex h-8 w-8 items-center justify-center rounded-lg text-slate-400 transition-colors hover:bg-slate-200 hover:text-slate-600 dark:hover:bg-slate-700 dark:hover:text-slate-300"
+                    >
                         <ArrowLeft className="h-5 w-5" />
                     </button>
                 ) : (
@@ -179,7 +183,7 @@ export const TajneedPage: FC = () => {
                 )}
                 <div className="flex items-center gap-3">
                     <h2 className="text-lg font-semibold tracking-tight text-slate-900 dark:text-white">
-                        {t('title')}
+                        {t("title")}
                     </h2>
                     {initialFilter && (
                         <Badge variant="secondary" className="gap-1.5">
@@ -204,12 +208,12 @@ export const TajneedPage: FC = () => {
                         type="text"
                         value={search}
                         onChange={(e) => setSearch(e.target.value)}
-                        placeholder={t('searchPlaceholder')}
+                        placeholder={t("searchPlaceholder")}
                         className="h-9 w-full rounded-lg border border-slate-200 bg-white pl-9 pr-8 text-sm text-slate-700 placeholder-slate-400 outline-none transition-colors focus:border-ring focus:ring-2 focus:ring-ring/20 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-200 dark:placeholder-slate-500 dark:focus:border-ring"
                     />
                     {search && (
                         <button
-                            onClick={() => setSearch('')}
+                            onClick={() => setSearch("")}
                             className="absolute right-2 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600"
                         >
                             <X className="h-4 w-4" />
@@ -218,7 +222,10 @@ export const TajneedPage: FC = () => {
                 </div>
                 {/* Active column filter badges */}
                 <FilterBadges
-                    filters={columnFilters.map((cf) => ({ label: cf.column, value: cf.value }))}
+                    filters={columnFilters.map((cf) => ({
+                        label: cf.column,
+                        value: cf.value,
+                    }))}
                 />
             </motion.div>
 
@@ -238,6 +245,7 @@ export const TajneedPage: FC = () => {
                         enabled={membersReady}
                         quickFilterText={freeText}
                         initialFilterModel={filterModel}
+                        canExport={hasPermission("reports:export")}
                     />
                 </div>
             </motion.div>

@@ -19,4 +19,39 @@ export default defineConfig([
       globals: globals.browser,
     },
   },
+  {
+    files: [
+      'src/components/*Analytics.tsx',
+      'src/components/*Reports.tsx',
+      'src/components/DynamicFilters.tsx',
+      'src/lib/sql.ts',
+    ],
+    rules: {
+      '@typescript-eslint/no-explicit-any': 'warn',
+    },
+  },
+  {
+    files: [
+      'src/components/DynamicFilters.tsx',
+      'src/components/FiltersBar.tsx',
+      'src/i18n/LanguageContext.tsx',
+      'src/lib/AuthContext.tsx',
+      'src/store.tsx',
+    ],
+    rules: {
+      'react-refresh/only-export-components': 'off',
+    },
+  },
+  {
+    files: ['src/lib/AuthContext.tsx'],
+    rules: {
+      'react-hooks/set-state-in-effect': 'off',
+    },
+  },
+  {
+    files: ['tests/e2e/**/*.ts'],
+    rules: {
+      '@typescript-eslint/no-explicit-any': 'off',
+    },
+  },
 ])

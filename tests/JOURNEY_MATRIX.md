@@ -21,10 +21,9 @@ Status legend:
 
 | Journey | Route | Suite | Status | Notes |
 |---|---|---|---|---|
-| Markaz baseline report interactions | `/markaz/*` | `tests/e2e/markaz-basic.spec.ts` | in-progress | Good baseline; can be expanded to explicit MBT transitions |
+| Markaz search and reset transitions | `/markaz/*` | `tests/e2e/markaz-mbt.spec.ts` | green | Preview Chromium lane covers generated search/clear transitions and placeholder invariants |
 
 ## Implementation Order
 
 1. Keep auth and RBAC suites green as role policy changes.
-2. Convert `markaz-basic.spec.ts` to command-model MBT with filter/state transitions.
-3. Add export/report-download invariants after data pipeline stabilizes.
+2. Add export/report-download invariants after data pipeline stabilizes.

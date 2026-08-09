@@ -1,0 +1,27 @@
+[
+    {
+        "jamat_id": "nsw-marsden-park",
+        "name": "Marsden Park",
+        "state": "NSW"
+    },
+    {
+        "jamat_id": "nsw-penrith",
+        "name": "Penrith",
+        "state": "NSW"
+    },
+    {
+        "jamat_id": "nsw-sydney",
+        "name": "Sydney",
+        "state": "NSW"
+    },
+    {
+        "jamat_id": "vic-melbourne",
+        "name": "Melbourne",
+        "state": "VIC"
+    },
+    {
+        "jamat_id": "qld-brisbane",
+        "name": "Brisbane",
+        "state": "QLD"
+    }
+]
