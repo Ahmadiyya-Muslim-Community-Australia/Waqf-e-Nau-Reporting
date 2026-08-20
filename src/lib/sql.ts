@@ -10,7 +10,7 @@ export interface JamaatFilter {
     jamat_id: string;
 }
 
-import { JAMAAT_BY_ID } from '@waqfenau/api-contracts';
+import { JAMAAT_BY_ID } from '@ahmadiyya-muslim-community-australia/api-contracts';
 
 export function buildJamaatClause(filter: JamaatFilter | null, tableAlias?: string): string {
     if (!filter?.jamat_id) return '';

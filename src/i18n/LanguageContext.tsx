@@ -29,7 +29,10 @@ import {
 } from 'react';
 import { formatNumber } from 'bhasha-js';
 import { lookup, type Lang } from './translations';
-import { toUrduNumerals, toAsciiDigits } from '@waqfenau/design-tokens/urdu';
+import {
+    toUrduNumerals,
+    toAsciiDigits,
+} from '@ahmadiyya-muslim-community-australia/design-tokens/urdu';
 
 // ── Constants ────────────────────────────────────────────────────────
 

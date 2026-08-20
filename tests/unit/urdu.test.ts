@@ -1,12 +1,15 @@
 /**
- * Unit tests for @waqfenau/design-tokens Urdu utilities.
+ * Unit tests for @ahmadiyya-muslim-community-australia/design-tokens Urdu utilities.
  *
  * Tests the shared toUrduNumerals / toAsciiDigits functions used by
  * both the main site (waqfenau.au) and the reports dashboard.
  */
 
 import { describe, it, expect } from 'vitest';
-import { toUrduNumerals, toAsciiDigits } from '@waqfenau/design-tokens/urdu';
+import {
+    toUrduNumerals,
+    toAsciiDigits,
+} from '@ahmadiyya-muslim-community-australia/design-tokens/urdu';
 
 describe('toUrduNumerals', () => {
     it('converts ASCII digits to Urdu numerals', () => {
