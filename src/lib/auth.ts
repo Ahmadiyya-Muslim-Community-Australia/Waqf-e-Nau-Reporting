@@ -1,4 +1,8 @@
-import { hasPermission as hasSharedPermission, ROLE_DEFAULTS, type Permission } from '@waqfenau/permissions';
+import {
+    hasPermission as hasSharedPermission,
+    ROLE_DEFAULTS,
+    type Permission,
+} from '@ahmadiyya-muslim-community-australia/permissions';
 
 export interface WnUserContext {
     userId: string;

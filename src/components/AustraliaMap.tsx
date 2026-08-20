@@ -3,14 +3,14 @@
  * distribution by Jama'at using Leaflet with circle markers.
  *
  * Coordinates are sourced from the canonical Jama'at definitions in
- * @waqfenau/api-contracts, keyed by alias for matching raw data-lake values.
+ * @ahmadiyya-muslim-community-australia/api-contracts, keyed by alias for matching raw data-lake values.
  */
 
 import { useCallback, useEffect, useState } from 'react';
 import type { FC } from 'react';
 import { MapContainer, TileLayer, CircleMarker, Tooltip } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
-import { JAMAAT_BY_ALIAS } from '@waqfenau/api-contracts';
+import { JAMAAT_BY_ALIAS } from '@ahmadiyya-muslim-community-australia/api-contracts';
 
 /* ── Colour helpers ──────────────────────────────────────────── */
 
