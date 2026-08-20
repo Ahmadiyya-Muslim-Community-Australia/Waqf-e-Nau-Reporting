@@ -7,10 +7,10 @@
  *
  * The CSS class is defined inline via Tailwind rather than in a separate
  * CSS file to avoid any cascade/layer/import ordering issues between
- * Tailwind v4's processing and our shared @waqfenau/design-tokens.
+ * Tailwind v4's processing and our shared @ahmadiyya-muslim-community-australia/design-tokens.
  */
 
-import bismillahImg from '@waqfenau/design-tokens/bismillah.svg';
+import bismillahImg from '@ahmadiyya-muslim-community-australia/design-tokens/bismillah.svg';
 import type { FC } from 'react';
 
 export const AnnouncementBanner: FC = () => (
