@@ -105,9 +105,9 @@ function detectColumns(data: unknown): ColDef[] {
         /* For boolean columns, use a simple text filter */
         filterParams: isBoolean
           ? {
-              filterOptions: ["equals"],
-              defaultOption: "equals",
-            }
+            filterOptions: ["equals"],
+            defaultOption: "equals",
+          }
           : undefined,
       };
     });
