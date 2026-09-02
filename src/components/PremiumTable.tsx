@@ -128,7 +128,7 @@ const brandTheme = themeQuartz.withParams({
   backgroundColor: "hsl(var(--card))",
   foregroundColor: "hsl(var(--foreground))",
   headerBackgroundColor: "var(--wn-color-primary)",
-  headerTextColor: "#ffffff",
+  headerTextColor: "hsl(var(--primary-foreground))",
   headerFontSize: 12,
   fontFamily: "var(--wn-font-sans)",
   fontSize: 13,

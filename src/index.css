@@ -1,10 +1,10 @@
-@import '@waqfenau/design-tokens/fonts.css';
+@import '@ahmadiyya-muslim-community-australia/design-tokens/fonts.css';
 @import 'tailwindcss';
 
 /* Enable class-based dark mode (toogled by ThemeToggle in App.tsx).
    Without this, Tailwind v4 uses prefers-color-scheme media query. */
 @variant dark (&:where(.dark, .dark *));
-@import '@waqfenau/design-tokens/tokens.css';
+@import '@ahmadiyya-muslim-community-australia/design-tokens/tokens.css';
 
 
 /* ═══════════════════════════════════════════════════════════════
